@@ -17,7 +17,26 @@ void loadData() {
   println("Loading Training Data...");
   Table table = loadTable("mnist_train.csv");  
   println("Training Data Loaded");
-  viewImage(table.getRow(1));
+  println("# of columns: " + table.getColumnCount());// Should be 28x28+1 OR 785
+  
+  for(int i=0; i<4;i++) {
+    pushMatrix();
+    
+    switch (i) {
+      case 0: translate(0, 0);
+        break;
+      case 1: translate(300, 0);
+        break;
+      case 2: translate(0, 300);
+        break;
+      case 3: translate(300, 300);
+        break;
+      default: break;
+    }
+    viewImage(table.getRow(i));
+    
+    popMatrix();
+  }
 }
 
 void viewImage(TableRow image) {
@@ -25,7 +44,6 @@ void viewImage(TableRow image) {
   int column = 1;
   int row = 1;
   
-  println("# of columns: " + image.getColumnCount());// Should be 28x28+1 OR 785
   println("Label: " + image.getInt(0)); // The number the following pixels should look like
   
   for(int i = 1; i<image.getColumnCount(); i++) {
@@ -37,7 +55,7 @@ void viewImage(TableRow image) {
     
     pushMatrix();
     translate(size * column, size * row);
-    fill(image.getInt(i));
+    fill(convertGreyScale(image.getInt(i)));
     ellipse(0, 0, size, size);
     popMatrix();
     
@@ -47,6 +65,12 @@ void viewImage(TableRow image) {
       row++;
     }
     
-  }
-  
+  } 
+}
+
+// invert the image colors so that the background is white.
+int convertGreyScale(int toConvert) {
+  if(toConvert < 85) return 255;
+  else if (toConvert > 170) return 0;
+  else return 127;
 }
